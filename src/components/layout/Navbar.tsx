@@ -72,50 +72,52 @@ export function Navbar() {
   const solid = scrolled || open;
 
   return (
-    <header
-      className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,backdrop-filter] duration-500",
-        solid ? "bg-navy-900/95 shadow-[0_1px_0_0_rgb(198_164_106/0.25)] backdrop-blur-md" : "bg-transparent",
-      )}
-    >
-      <nav aria-label="Primary" className="container-wide flex h-[4.5rem] items-center justify-between lg:h-20">
-        <Logo />
+    <>
+      <header
+        className={cn(
+          "fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,backdrop-filter] duration-500",
+          solid ? "bg-navy-900/95 shadow-[0_1px_0_0_rgb(198_164_106/0.25)] backdrop-blur-md" : "bg-transparent",
+        )}
+      >
+        <nav aria-label="Primary" className="container-wide flex h-[4.5rem] items-center justify-between lg:h-20">
+          <Logo />
 
-        <ul className="hidden items-center gap-8 xl:gap-10 lg:flex">
-          {navLinks.map((l) => (
-            <li key={l.href}>
-              <Link
-                href={l.href}
-                aria-current={isActive(l.href) ? "page" : undefined}
-                className={cn(
-                  "link-underline py-2 text-[0.8rem] font-medium tracking-[0.06em] transition-colors",
-                  isActive(l.href) ? "text-gold-300" : "text-ivory-100/85 hover:text-ivory-50",
-                )}
-              >
-                {l.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
+          <ul className="hidden items-center gap-8 xl:gap-10 lg:flex">
+            {navLinks.map((l) => (
+              <li key={l.href}>
+                <Link
+                  href={l.href}
+                  aria-current={isActive(l.href) ? "page" : undefined}
+                  className={cn(
+                    "link-underline py-2 text-[0.8rem] font-medium tracking-[0.06em] transition-colors",
+                    isActive(l.href) ? "text-gold-300" : "text-ivory-100/85 hover:text-ivory-50",
+                  )}
+                >
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
 
-        <div className="hidden items-center gap-4 lg:flex">
-          <Link href="/contact?type=consultation#enquiry" className="btn btn-gold !min-h-11 !px-5 !text-[0.7rem]">
-            Request Consultation
-          </Link>
-        </div>
+          <div className="hidden items-center gap-4 lg:flex">
+            <Link href="/contact?type=consultation#enquiry" className="btn btn-gold !min-h-11 !px-5 !text-[0.7rem]">
+              Request Consultation
+            </Link>
+          </div>
 
-        <button
-          ref={menuButtonRef}
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          aria-expanded={open}
-          aria-controls="mobile-menu"
-          aria-label={open ? "Close menu" : "Open menu"}
-          className="-mr-2 flex h-12 w-12 items-center justify-center text-ivory-50 lg:hidden"
-        >
-          {open ? <X size={26} strokeWidth={1.5} /> : <Menu size={26} strokeWidth={1.5} />}
-        </button>
-      </nav>
+          <button
+            ref={menuButtonRef}
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            aria-label={open ? "Close menu" : "Open menu"}
+            className="-mr-2 flex h-12 w-12 items-center justify-center text-ivory-50 lg:hidden"
+          >
+            {open ? <X size={26} strokeWidth={1.5} /> : <Menu size={26} strokeWidth={1.5} />}
+          </button>
+        </nav>
+      </header>
 
       <AnimatePresence>
         {open ? (
@@ -126,7 +128,7 @@ export function Navbar() {
             animate={{ opacity: 1 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0 }}
             transition={{ duration: 0.35 }}
-            className="fixed inset-x-0 bottom-0 top-[4.5rem] overflow-y-auto bg-navy-900 lg:hidden"
+            className="fixed inset-x-0 bottom-0 top-[4.5rem] z-40 overflow-y-auto bg-navy-900 lg:hidden"
           >
             <div className="grid-motif pointer-events-none absolute inset-0 opacity-60" aria-hidden />
             <div className="container-wide relative flex min-h-full flex-col pb-10 pt-6">
@@ -168,6 +170,6 @@ export function Navbar() {
           </motion.div>
         ) : null}
       </AnimatePresence>
-    </header>
+    </>
   );
 }
