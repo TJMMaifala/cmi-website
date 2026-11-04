@@ -65,7 +65,9 @@ This project uses the OpenNext Cloudflare adapter and deploys as a **Cloudflare 
 4. Preview in the Workers runtime with `npm run preview`.
 5. Deploy from an authenticated Cloudflare CLI session with `npm run deploy`.
 
-Cloudflare’s Workers Builds can also build from the repository using `npm ci` and `npm run deploy`. Set the public build-time variables in the build configuration and the email/Turnstile secrets as Worker secrets. Add `cmincattorneys.co.za` to the Worker’s custom domains and configure DNS in Cloudflare.
+For **Cloudflare Workers Builds**, configure the repository build command as `npm run build:cloudflare` and the deploy command as `npx wrangler deploy`. The Cloudflare build command must run the OpenNext adapter; `npm run build` by itself only runs `next build` and does not create `.open-next/worker.js`. Make sure the build environment installs dev dependencies, since OpenNext and Wrangler are dev dependencies here. Set the public build-time variables in the build configuration and the email/Turnstile secrets as Worker secrets. Add `cmincattorneys.co.za` to the Worker’s custom domains and configure DNS in Cloudflare.
+
+Alternatively, deploy from a terminal with `npm run deploy` after authenticating with `npx wrangler login`; that script runs the OpenNext build and deploy steps itself.
 
 The `RESEND_API_KEY`, sender address and destination address must be configured for enquiry delivery. Without them, the endpoint responds with an explicit unavailable message rather than pretending the message was sent. The in-memory rate limit is best-effort per Worker instance; Turnstile is recommended for spam protection.
 
