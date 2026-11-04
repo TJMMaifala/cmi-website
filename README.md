@@ -46,11 +46,28 @@ Copy `.env.example` to `.env.local`. Never commit real values.
 
 **Forms never fake success.** `POST /api/contact` validates input (Zod, shared with the browser), blocks spam (honeypot, minimum fill time, same-origin check, rate limit, optional Turnstile) and only returns success if Resend accepted the email. Without the three email variables it returns 503 and the visitor is shown the phone and email fallback.
 
-## 4. Deployment
+## 4. Deployment to Cloudflare Workers
 
-**Vercel (recommended for Next.js):** push to GitHub, import the repo in Vercel, add the environment variables, deploy, then add `cmincattorneys.co.za` under Domains and update DNS as instructed.
+This project uses the OpenNext Cloudflare adapter and deploys as a **Cloudflare Worker** (not a static-only Pages site). The Worker runs the Next.js pages and `/api/contact`.
 
-**Cloudflare Pages:** supported via the OpenNext Cloudflare adapter (`@opennextjs/cloudflare`); the API route needs the Workers runtime, so use Vercel unless the client specifically wants Cloudflare hosting.
+1. Install dependencies with `npm install`.
+2. Set the required production secrets in the Cloudflare account:
+
+   ```bash
+   npx wrangler secret put RESEND_API_KEY
+   npx wrangler secret put CONTACT_FROM_EMAIL
+   npx wrangler secret put CONTACT_TO_EMAIL
+   ```
+
+   Set `TURNSTILE_SECRET_KEY` as a Worker secret if Turnstile is enabled. Set the corresponding `NEXT_PUBLIC_TURNSTILE_SITE_KEY` as a build environment variable so Next.js includes it in the browser bundle. Never put secret values in `wrangler.jsonc` or source control. For local preview, copy `.dev.vars.example` to `.dev.vars` and fill in local values.
+
+3. Configure `NEXT_PUBLIC_SITE_URL` (default: `https://cmincattorneys.co.za`) and any optional `NEXT_PUBLIC_WHATSAPP_NUMBER` in the build environment.
+4. Preview in the Workers runtime with `npm run preview`.
+5. Deploy from an authenticated Cloudflare CLI session with `npm run deploy`.
+
+Cloudflare’s Workers Builds can also build from the repository using `npm ci` and `npm run deploy`. Set the public build-time variables in the build configuration and the email/Turnstile secrets as Worker secrets. Add `cmincattorneys.co.za` to the Worker’s custom domains and configure DNS in Cloudflare.
+
+The `RESEND_API_KEY`, sender address and destination address must be configured for enquiry delivery. Without them, the endpoint responds with an explicit unavailable message rather than pretending the message was sent. The in-memory rate limit is best-effort per Worker instance; Turnstile is recommended for spam protection.
 
 After go-live: submit `https://cmincattorneys.co.za/sitemap.xml` to Google Search Console and redirect the old WordPress URLs (`/about/`, `/practice-areas/`, `/contact/`) if trailing-slash behaviour differs.
 
